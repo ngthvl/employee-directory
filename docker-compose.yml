@@ -1,0 +1,62 @@
+version: '3.8'
+name: teejay-user-app-demo
+
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: user-app-db-password
+      MYSQL_DATABASE: user_app_db
+    ports:
+      - "3301:3306"
+    volumes:
+    - user_app_database_volume:/var/lib/mysql
+    networks:
+      - teejay-user-app-demo-net
+  api:
+    build: ./backend
+    tty: true
+    depends_on:
+      - db
+    volumes:
+    - ./backend:/app
+    - user_app_node_modules_be_volume:/app/node_modules
+    networks:
+      - teejay-user-app-demo-net
+  frontend:
+    build: ./frontend
+    tty: true
+    depends_on:
+      - api
+    volumes:
+      - ./frontend:/app
+      - user_app_node_modules_fe_volume:/app/node_modules
+      - user_app_binary:/app/build
+    networks:
+      - teejay-user-app-demo-net
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 8002:80
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - teejay-user-app-demo-net
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - user_app_binary:/var/www/html/
+
+volumes:
+  user_app_database_volume:
+  user_app_node_modules_be_volume:
+  user_app_node_modules_fe_volume:
+  user_app_binary:
+
+networks:
+  teejay-user-app-demo-net:
+    driver: bridge

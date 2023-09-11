@@ -1,0 +1,17 @@
+{
+  "name": "teejay-demo-app-api",
+  "version": "1.0.0",
+  "description": "A Demo Project",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Teejay Tamani",
+  "license": "ISC",
+  "dependencies": {
+    "db-migrate": "^0.11.14",
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
+    "sequelize": "^6.33.0"
+  }
+}
